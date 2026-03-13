@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.E.D.A Organization - Login & Sign Up</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <div class="header">
+            <h1>S.E.D.A Organization</h1>
+            <p id="formTitle">Administrator Access - Secure Login</p>
+            <div class="toggle-form">
+                <span id="adminLoginToggle" class="active">Admin Login</span>
+            </div>
+        </div>
+        <form id="authForm">
+            <div class="form-group">
+                <input type="text" id="email" placeholder=" " required>
+                <label for="email">Admin Username</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+            <div class="form-group" id="adminKeyGroup">
+                <input type="password" id="adminKey" placeholder=" ">
+                <label for="adminKey">Admin Secret Key (Optional)</label>
+            </div>
+            <button type="submit" class="btn" id="submitBtn">Admin Login</button>
+        </form>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
