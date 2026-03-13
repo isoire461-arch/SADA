@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.E.D.A Organization - Authentication & Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* S.E.D.A Organization - Main Stylesheet - Consolidated */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: block;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Login Page Styles */
+        .login-page {
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.75)), 
+                        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920') no-repeat center center fixed;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-header { text-align: center; margin-bottom: 30px; }
+        .login-header h1 { font-size: 2.2rem; color: #1e293b; margin-bottom: 10px; font-weight: 700; letter-spacing: -0.5px; }
+        .login-header p { color: #475569; font-size: 1rem; font-weight: 500; }
+        
+        .toggle-form { margin-top: 15px; text-align: center; }
+        .toggle-form span { color: #999; cursor: pointer; font-size: 0.9rem; transition: color 0.3s ease; padding: 5px 10px; border-radius: 5px; }
+        .toggle-form span.active { color: #667eea; font-weight: bold; background: rgba(102, 126, 234, 0.1); }
+        .toggle-form span:hover { color: #667eea; }
+        
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 15px 20px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: rgba(255, 255, 255, 0.8);
+        }
+        .form-group label {
+            position: absolute; top: 15px; left: 20px; color: #999; transition: all 0.3s ease; pointer-events: none;
+        }
+        .form-group input:focus + label, .form-group input:not(:placeholder-shown) + label {
+            top: -10px; left: 15px; font-size: 0.8rem; color: #667eea; background: white; padding: 0 5px;
+        }
+        
+        .btn {
+            width: 100%; padding: 15px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .btn:active { transform: translateY(0); }
+        
+        #adminKeyGroup label { color: #764ba2; }
+        
+        /* Particles */
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .particle { position: absolute; background: rgba(255, 255, 255, 0.15); border-radius: 50%; animation: float 6s ease-in-out infinite; box-shadow: 0 0 6px rgba(255, 255, 255, 0.1); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        
+        /* Dashboard Styles */
+        .dashboard-wrapper { display: flex; min-height: 100vh; }
+        
+        .sidebar {
+            width: 280px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 30px 20px; position: fixed; height: 100vh; overflow-y: auto; border-right: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .logo { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid rgba(102, 126, 234, 0.2); }
+        .logo h2 { color: #667eea; font-size: 1.8rem; font-weight: 700; }
+        .logo span { color: #764ba2; font-size: 0.9rem; }
+        
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 10px; }
+        .sidebar-menu a {
+            display: flex; align-items: center; padding: 15px 20px; color: #475569; text-decoration: none; border-radius: 12px; transition: all 0.3s ease; font-weight: 500;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: linear-gradient(45deg, #667eea, #764ba2); color: white; transform: translateX(5px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .sidebar-menu i { margin-right: 15px; width: 20px; text-align: center; }
+        
+        .main-content { flex: 1; margin-left: 280px; padding: 30px; }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px 30px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .page-title { font-size: 2rem; color: #333; margin: 0; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-avatar {
+            width: 45px; height: 45px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;
+        }
+        .user-details { display: flex; flex-direction: column; }
+        .user-name { font-weight: 600; color: #333; }
+        .user-role { font-size: 0.85rem; color: #667eea; }
+        
+        .logout-btn {
+            padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+        }
+        .logout-btn:hover { background: #dc2626; transform: translateY(-2px); }
+        
+        /* Tab Contents */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); transition: all 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); }
+        .stat-card .stat-icon {
+            width: 50px; height: 50px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 15px;
+        }
+        .stat-card .stat-value { font-size: 2rem; font-weight: 700; color: #333; }
+        .stat-card .stat-label { color: #64748b; font-size: 0.9rem; }
+        
+        /* Quick Actions */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .quick-action-btn {
+            padding: 20px; background: rgba(255, 255, 255, 0.95); border: 2px solid #e1e5e9; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center;
+        }
+        .quick-action-btn:hover { border-color: #667eea; background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); transform: translateY(-3px); }
+        .quick-action-btn i { font-size: 2rem; color: #667eea; margin-bottom: 10px; }
+        .quick-action-btn span { display: block; color: #475569; font-weight: 500; }
+        
+        /* Form Styles */
+        .form-card {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .form-grid .form-group.full-width { grid-column: span 2; }
+        
+        .form-card h3 { color: #333; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid rgba(102, 126, 234, 0.2); }
+        
+        /* Table Styles */
+        .data-table-container { overflow-x: auto; }
+        .users-table { width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.95); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); }
+        .users-table th { background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; text-align: left; font-weight: 600; }
+        .users-table td { padding: 15px; border-bottom: 1px solid #e1e5e9; color: #475569; }
+        .users-table tr:hover { background: rgba(102, 126, 234, 0.05); }
+        
+        .btn-small { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.3s ease; margin-right: 5px; }
+        .btn-edit { background: #3b82f6; color: white; }
+        .btn-edit:hover { background: #2563eb; }
+        .btn-promote { background: #10b981; color: white; }
+        .btn-promote:hover { background: #059669; }
+        .btn-demote { background: #f59e0b; color: white; }
+        .btn-demote:hover { background: #d97706; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-delete:hover { background: #dc2626; }
+        
+        /* Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; animation: fadeIn 0.3s ease;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid rgba(102, 126, 234, 0.2); }
+        .modal-header h3 { color: #333; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
+        
+        /* Analytics */
+        .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        .analytics-card { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); }
+        .analytics-card h4 { color: #333; margin-bottom: 20px; }
+        
+        /* Settings */
+        .settings-section { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); }
+        .settings-section h4 { color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid rgba(102, 126, 234, 0.2); }
+        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e1e5e9; }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-label { font-weight: 500; color: #475569; }
+        .settings-value { color: #333; font-weight: 600; }
+        
+        .danger-zone { border: 2px solid #ef4444; }
+        .danger-zone h4 { color: #ef4444; }
+        
+        /* No users message */
+        .no-users { text-align: center; padding: 50px; color: #64748b; }
+        .no-users i { font-size: 4rem; margin-bottom: 20px; color: #e1e5e9; }
+        
+        /* Hidden class */
+        .hidden { display: none !important; }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar-menu a span { display: none; }
+            .sidebar-menu a { justify-content: center; }
+            .sidebar-menu i { margin: 0; }
+            .logo h2 { font-size: 1.2rem; }
+            .logo span { display: none; }
+            .main-content { margin-left: 80px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .top-bar { flex-direction: column; gap: 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container { margin: 20px; padding: 30px 20px; }
+            .login-header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="particles" id="particles"></div>
+        <div class="login-container">
+            <div class="login-header">
+                <h1>S.E.D.A Organization</h1>
+                <p id="formTitle">Administrator Access - Secure Login</p>
+                <div class="toggle-form">
+                    <span id="adminLoginToggle" class="active">Admin Login</span>
+                </div>
+            </div>
+            <form id="authForm">
+                <div class="form-group">
+                    <input type="text" id="email" placeholder=" " required>
+                    <label for="email">Admin Username</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                </div>
+                <div class="form-group" id="adminKeyGroup">
+                    <input type="password" id="adminKey" placeholder=" ">
+                    <label for="adminKey">Admin Secret Key (Optional)</label>
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Admin Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="dashboard-wrapper hidden">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>S.E.D.A</h2>
+                <span>Organization</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showTab('overview'); return false;"><i class="fas fa-home"></i><span>Overview</span></a></li>
+                <li><a href="#" onclick="showTab('registration'); return false;"><i class="fas fa-user-plus"></i><span>Registration Form</span></a></li>
+                <li><a href="#" onclick="showTab('users'); return false;"><i class="fas fa-users"></i><span>Registered Users</span></a></li>
+                <li><a href="#" onclick="showTab('analytics'); return false;"><i class="fas fa-chart-bar"></i><span>Analytics</span></a></li>
+                <li><a href="#" onclick="showTab('settings'); return false;"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title" id="pageTitle">Dashboard Overview</h1>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <span class="user-name" id="currentUserName">Admin</span>
+                        <span class="user-role" id="currentUserRole">Administrator</span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Total Registered Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                        <div class="stat-value" id="activeUsers">0</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="stat-value" id="recentUsers">0</div>
+                        <div class="stat-label">New This Month</div>
+                    </div>
+                </div>
+                <h3 style="color: #333; margin-bottom: 20px;">Quick Actions</h3>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="showTab('registration')">
+                        <i class="fas fa-user-plus"></i>
+                        <span>New Registration</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="showTab('users')">
+                        <i class="fas fa-users"></i>
+                        <span>View All Users</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="showTab('analytics')">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Analytics</span>
+                    </button>
+                    <button class="quick-action-btn" id="addUserBtn" onclick="openAddUserModal()">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Add User</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Registration Tab -->
+            <div id="registration" class="tab-content">
+                <div class="form-card">
+                    <h3><i class="fas fa-user-plus"></i> User Registration Form</h3>
+                    <form id="dashboardRegForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <input type="text" id="regIdNo" placeholder=" " required>
+                                <label for="regIdNo">ID Number</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regFullname" placeholder=" " required>
+                                <label for="regFullname">Full Name</label>
+                            </div>
+                            <div class="form-group">
+                                <select id="regGender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="date" id="regDob" placeholder=" " required>
+                                <label for="regDob">Date of Birth</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regReligion" placeholder=" ">
+                                <label for="regReligion">Religion</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regTribe" placeholder=" ">
+                                <label for="regTribe">Tribe/Language</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regSection" placeholder=" ">
+                                <label for="regSection">Section</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="regJobTitle" placeholder=" ">
+                                <label for="regJobTitle">Job Title</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="regEmail" placeholder=" " required>
+                                <label for="regEmail">Email Address</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="regPhone" placeholder=" ">
+                                <label for="regPhone">Phone Number</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="file" id="regPassport" accept="image/*">
+                                <label for="regPassport">Passport Photo</label>
+                            </div>
+                            <div class="form-group full-width">
+                                <textarea id="regNotes" rows="3" placeholder=" "></textarea>
+                                <label for="regNotes">Additional Notes</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Submit Form</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users" class="tab-content">
+                <div id="usersList">
+                    <div class="no-users">
+                        <i class="fas fa-users"></i>
+                        <p>No registered users yet. Users will appear here after registration.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4><i class="fas fa-chart-pie"></i> Registration Overview</h4>
+                        <p style="color: #64748b; margin-bottom: 15px;">Total registrations and verification status</p>
+                        <div style="display: flex; gap: 20px; align-items: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #667eea;" id="analyticsTotal">0</div>
+                                <div style="color: #64748b;">Total</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #10b981;" id="analyticsVerified">0</div>
+                                <div style="color: #64748b;">Verified</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;" id="analyticsPending">0</div>
+                                <div style="color: #64748b;">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4><i class="fas fa-calendar-alt"></i> Registration Trends</h4>
+                        <p style="color: #64748b;">User registration activity</p>
+                        <div style="margin-top: 20px; padding: 20px; background: rgba(102, 126, 234, 0.1); border-radius: 10px;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: #667eea;" id="analyticsThisMonth">0</div>
+                            <div style="color: #64748b;">Registrations this month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="settings-section">
+                    <h4><i class="fas fa-user-shield"></i> Admin Profile</h4>
+                    <div class="settings-row">
+                        <span class="settings-label">Role</span>
+                        <span class="settings-value" id="adminRole">System Owner</span>
+                    </div>
+                    <div class="settings-row">
+                        <span class="settings-label">Email</span>
+                        <span class="settings-value" id="adminEmail">admin@seda.org</span>
+                    </div>
+                    <div class="settings-row">
+                        <span class="settings-label">Created Date</span>
+                        <span class="settings-value" id="adminCreated">N/A</span>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4><i class="fas fa-lock"></i> Change Password</h4>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <input type="password" id="currentPassword" placeholder=" " required>
+                            <label for="currentPassword">Current Password</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="newPassword" placeholder=" " required>
+                            <label for="newPassword">New Password</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="confirmNewPassword" placeholder=" " required>
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                        </div>
+                        <button type="submit" class="btn">Change Password</button>
+                    </form>
+                </div>
+                
+                <div class="settings-section">
+                    <h4><i class="fas fa-user-edit"></i> Change Username</h4>
+                    <form id="changeUsernameForm">
+                        <div class="form-group">
+                            <input type="password" id="usernameCurrentPassword" placeholder=" " required>
+                            <label for="usernameCurrentPassword">Current Password</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="newUsername" placeholder=" " required>
+                            <label for="newUsername">New Username</label>
+                        </div>
+                        <button type="submit" class="btn">Change Username</button>
+                    </form>
+                </div>
+                
+                <div class="settings-section danger-zone">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Danger Zone</h4>
+                    <div class="settings-row">
+                        <span class="settings-label">Reset Admin Password</span>
+                        <button class="btn-small" style="background: #f59e0b; color: white;" onclick="resetAdminPassword()">Reset to Default</button>
+                    </div>
+                    <div class="settings-row">
+                        <span class="settings-label">Clear All Users</span>
+                        <button class="btn-small" style="background: #ef4444; color: white;" onclick="clearAllUsers()">Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add New User</h3>
+                <button class="modal-close" onclick="closeAddUserModal()">&times;</button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <input type="text" id="addIdNo" placeholder=" " required>
+                    <label for="addIdNo">ID Number</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="addFullname" placeholder=" " required>
+                    <label for="addFullname">Full Name</label>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <select id="addGender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="addDob" placeholder=" ">
+                        <label for="addDob">Date of Birth</label>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" id="addReligion" placeholder=" ">
+                        <label for="addReligion">Religion</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="addTribe" placeholder=" ">
+                        <label for="addTribe">Tribe/Language</label>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" id="addSection" placeholder=" ">
+                        <label for="addSection">Section</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="addJobTitle" placeholder=" ">
+                        <label for="addJobTitle">Job Title</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select id="addRole" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="addEmail" placeholder=" " required>
+                    <label for="addEmail">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="addPhone" placeholder=" ">
+                    <label for="addPhone">Phone Number</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="addPassword" placeholder=" " required>
+                    <label for="addPassword">Password</label>
+                </div>
+                <button type="submit" class="btn">Create User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==================== SESSION MANAGEMENT ====================
+        function getCurrentUser() {
+            const userStr = sessionStorage.getItem('sedaCurrentUser');
+            return userStr ? JSON.parse(userStr) : null;
+        }
+
+        function setCurrentUser(user) {
+            sessionStorage.setItem('sedaCurrentUser', JSON.stringify(user));
+        }
+
+        function logout() {
+            sessionStorage.removeItem('sedaCurrentUser');
+            showLoginPage();
+        }
+
+        // ==================== AUTHENTICATION ====================
+        function checkAuth() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                showLoginPage();
+                return false;
+            }
+            return true;
+        }
+
+        function isAdmin() {
+            const currentUser = getCurrentUser();
+            return currentUser && currentUser.role === 'admin';
+        }
+
+        // Admin storage keys
+        const ADMIN_STORAGE_KEY = 'sedaAdmin';
+        
+        // Generate admin secret key
+        function generateAdminKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let key = 'SEDA_ADMIN_';
+            for (let i = 0; i < 16; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return key;
+        }
+
+        // Enhanced hash function for passwords
+        function enhancedHash(str) {
+            let hash = 0;
+            const salt = 'SEDA_SECURE_SALT_2026';
+            const saltedStr = str + salt;
+            for (let i = 0; i < saltedStr.length; i++) {
+                const char = saltedStr.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            for (let i = 0; i < 1000; i++) {
+                hash = ((hash << 5) - hash) + i;
+                hash = hash & hash;
+            }
+            return 'hash_' + Math.abs(hash).toString(16);
+        }
+
+        // Initialize admin on first load
+        function initializeAdmin() {
+            console.log('[INIT] Starting admin initialization...');
+            const forceReset = true;
+            
+            if (forceReset) {
+                console.log('[INIT] Force resetting admin data');
+                localStorage.removeItem(ADMIN_STORAGE_KEY);
+            }
+            
+            let adminData = localStorage.getItem(ADMIN_STORAGE_KEY);
+            if (!adminData) {
+                console.log('[INIT] No admin found, creating new admin');
+                const adminKey = generateAdminKey();
+                const adminPassword = 'SEDAadmin2026';
+                const admin = {
+                    username: 'admin',
+                    email: 'admin@seda.org',
+                    password: enhancedHash(adminPassword),
+                    role: 'owner',
+                    createdAt: new Date().toISOString(),
+                    adminKey: adminKey,
+                    isOwner: true
+                };
+                localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+                console.log('[INIT] Admin created with credentials: admin / SEDAadmin2026');
+            }
+        }
+
+        // Get admin data
+        function getAdminData() {
+            return JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY));
+        }
+
+        // Verify admin credentials
+        function verifyAdminCredentials(email, password, adminKey) {
+            console.log('[AUTH] Verifying admin credentials for:', email);
+            const admin = getAdminData();
+            if (!admin) {
+                console.log('[AUTH] No admin data found');
+                return null;
+            }
+            
+            const hashedPassword = enhancedHash(password);
+            
+            if ((admin.email === email || admin.username === email) && 
+                (admin.password === hashedPassword || adminKey === admin.adminKey)) {
+                console.log('[AUTH] Admin verification successful');
+                return {
+                    idNo: 'SEDA_ADMIN_001',
+                    fullname: 'System Administrator',
+                    email: admin.email,
+                    role: 'owner',
+                    isOwner: true
+                };
+            }
+            console.log('[AUTH] Admin verification failed');
+            return null;
+        }
+
+        // ==================== PAGE NAVIGATION ====================
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('dashboardPage').classList.add('hidden');
+            initializeAdmin();
+            initParticles();
+        }
+
+        function showDashboardPage() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            updateStats();
+            loadAdminInfo();
+        }
+
+        // Check and show appropriate page
+        function checkPage() {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                showDashboardPage();
+                updateUIBasedOnRole();
+            } else {
+                showLoginPage();
+            }
+        }
+
+        // ==================== TAB FUNCTIONALITY ====================
+        function showTab(tabName) {
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(`'${tabName}'`)) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            // Update page title
+            const pageTitles = {
+                'overview': 'Dashboard Overview',
+                'registration': 'Registration Form',
+                'users': 'Registered Users',
+                'analytics': 'Analytics Dashboard',
+                'settings': 'Admin Settings'
+            };
+            document.getElementById('pageTitle').textContent = pageTitles[tabName] || 'Dashboard';
+
+            // Update content based on tab
+            if (tabName === 'users') {
+                displayUsers();
+            }
+            if (tabName === 'overview' || tabName === 'analytics') {
+                updateStats();
+                updateAnalytics();
+            }
+            if (tabName === 'settings') {
+                loadAdminInfo();
+            }
+        }
+
+        // ==================== DASHBOARD FUNCTIONS ====================
+        let registeredUsers = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+
+        function checkDashboardAuth() {
+            const currentUserStr = sessionStorage.getItem('sedaCurrentUser');
+            if (!currentUserStr) {
+                showLoginPage();
+                return null;
+            }
+            return JSON.parse(currentUserStr);
+        }
+
+        function isCurrentUserAdmin() {
+            const currentUser = checkDashboardAuth();
+            return currentUser && (currentUser.role === 'admin' || currentUser.role === 'owner' || currentUser.isOwner === true);
+        }
+
+        function updateUIBasedOnRole() {
+            const currentUser = checkDashboardAuth();
+            if (!currentUser) return;
+            
+            const userBadge = document.getElementById('userRole');
+            if (userBadge) {
+                userBadge.textContent = currentUser.role === 'owner' ? 'System Owner' : (currentUser.role === 'admin' ? 'Administrator' : 'User');
+            }
+            
+            const registrationTab = document.querySelector('.sidebar-menu a[onclick*="registration"]');
+            const addUserBtn = document.getElementById('addUserBtn');
+            const quickActionNewReg = document.querySelector('.quick-action-btn[onclick*="registration"]');
+            
+            const isAdminUser = currentUser && (currentUser.role === 'admin' || currentUser.role === 'owner' || currentUser.isOwner === true);
+            
+            if (!isAdminUser) {
+                document.querySelectorAll('.btn-delete').forEach(btn => { btn.style.display = 'none'; });
+                if (registrationTab) registrationTab.style.display = 'none';
+                if (addUserBtn) addUserBtn.style.display = 'none';
+                if (quickActionNewReg) quickActionNewReg.style.display = 'none';
+            } else {
+                if (registrationTab) registrationTab.style.display = 'flex';
+                if (addUserBtn) addUserBtn.style.display = 'inline-flex';
+                if (quickActionNewReg) quickActionNewReg.style.display = 'inline-flex';
+            }
+            
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar && currentUser) {
+                userAvatar.textContent = currentUser.fullname ? currentUser.fullname.charAt(0).toUpperCase() : 'U';
+            }
+        }
+
+        function generateIdNo() {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const nextId = users.length + 1;
+            const idNo = `SEDA2026${nextId.toString().padStart(2, '0')}`;
+            document.getElementById('regIdNo').value = idNo;
+        }
+
+        function displayUsers() {
+            const usersList = document.getElementById('usersList');
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const currentUser = checkDashboardAuth();
+            const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'owner' || currentUser.isOwner === true);
+
+            if (users.length === 0) {
+                usersList.innerHTML = '<div class="no-users"><i class="fas fa-users"></i><p>No registered users yet. Users will appear here after registration.</p></div>';
+                return;
+            }
+
+            let tableHTML = '<div class="data-table-container"><table class="users-table"><thead><tr><th>ID No</th><th>Name</th><th>Gender</th><th>DOB</th><th>Religion</th><th>Tribe</th><th>Section</th><th>Job Title</th><th>Email</th><th>Phone</th><th>Role</th><th>Verified</th><th>Registration Date</th><th>Actions</th></tr></thead><tbody>';
+
+            users.forEach((user, index) => {
+                const regDate = new Date(user.registrationDate).toLocaleDateString();
+                const dob = user.dob ? new Date(user.dob).toLocaleDateString() : 'N/A';
+                const sanitize = (str) => { const div = document.createElement('div'); div.textContent = str || 'N/A'; return div.innerHTML; };
+                const isUserAdmin = user.role === 'admin' || user.role === 'owner';
+                const isVerified = user.verified === true;
+                
+                const verifiedBadge = isVerified 
+                    ? '<span style="background: #10b981; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;"><i class="fas fa-check"></i> Verified</span>'
+                    : '<span style="background: #f59e0b; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;"><i class="fas fa-clock"></i> Pending</span>';
+                
+                tableHTML += `<tr>
+                    <td>${sanitize(user.idNo)}</td>
+                    <td>${sanitize(user.fullname)}</td>
+                    <td>${sanitize(user.gender)}</td>
+                    <td>${dob}</td>
+                    <td>${sanitize(user.religion)}</td>
+                    <td>${sanitize(user.tribe)}</td>
+                    <td>${sanitize(user.section)}</td>
+                    <td>${sanitize(user.jobTitle)}</td>
+                    <td>${sanitize(user.email)}</td>
+                    <td>${sanitize(user.phone)}</td>
+                    <td>${sanitize(user.role) || 'user'}</td>
+                    <td>${verifiedBadge}</td>
+                    <td>${regDate}</td>
+                    <td class="user-actions">
+                        <button class="btn-small btn-edit" onclick="editUser(${index})">Edit</button>
+                        ${isAdmin ? `
+                            <button class="btn-small ${isVerified ? 'btn-demote' : 'btn-promote'}" onclick="toggleUserVerification(${index})">
+                                ${isVerified ? 'Unverify' : 'Verify'}
+                            </button>
+                            ${!isUserAdmin ? `<button class="btn-small btn-promote" onclick="promoteToAdmin(${index})">Promote</button>` : `<button class="btn-small btn-demote" onclick="demoteToUser(${index})">Demote</button>`}
+                            <button class="btn-small btn-delete" onclick="deleteUser(${index})">Delete</button>
+                        ` : ''}
+                    </td>
+                </tr>`;
+            });
+
+            tableHTML += '</tbody></table></div>';
+            usersList.innerHTML = tableHTML;
+        }
+
+        function updateStats() {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const totalUsers = users.length;
+            const now = new Date();
+            const thisMonth = users.filter(user => {
+                const regDate = new Date(user.registrationDate);
+                return regDate.getMonth() === now.getMonth() && regDate.getFullYear() === now.getFullYear();
+            }).length;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = totalUsers;
+            document.getElementById('recentUsers').textContent = thisMonth;
+        }
+
+        function updateAnalytics() {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const now = new Date();
+            const thisMonth = users.filter(user => {
+                const regDate = new Date(user.registrationDate);
+                return regDate.getMonth() === now.getMonth() && regDate.getFullYear() === now.getFullYear();
+            }).length;
+            const verified = users.filter(u => u.verified === true).length;
+
+            document.getElementById('analyticsTotal').textContent = users.length;
+            document.getElementById('analyticsVerified').textContent = verified;
+            document.getElementById('analyticsPending').textContent = users.length - verified;
+            document.getElementById('analyticsThisMonth').textContent = thisMonth;
+        }
+
+        function deleteUser(index) {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can delete users.'); return; }
+            if (confirm('Are you sure you want to delete this user?')) {
+                const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+                users.splice(index, 1);
+                localStorage.setItem('sedaUsers', JSON.stringify(users));
+                displayUsers();
+                updateStats();
+                alert('User deleted successfully!');
+            }
+        }
+
+        function promoteToAdmin(index) {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can promote users.'); return; }
+            if (confirm('Are you sure you want to promote this user to admin?')) {
+                const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+                users[index].role = 'admin';
+                localStorage.setItem('sedaUsers', JSON.stringify(users));
+                displayUsers();
+                alert('User promoted to admin successfully!');
+            }
+        }
+
+        function demoteToUser(index) {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can demote users.'); return; }
+            if (confirm('Are you sure you want to demote this admin to user?')) {
+                const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+                users[index].role = 'user';
+                localStorage.setItem('sedaUsers', JSON.stringify(users));
+                displayUsers();
+                alert('Admin demoted to user successfully!');
+            }
+        }
+
+        function editUser(index) {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const user = users[index];
+
+            document.getElementById('regIdNo').value = user.idNo || '';
+            document.getElementById('regFullname').value = user.fullname;
+            document.getElementById('regGender').value = user.gender || '';
+            document.getElementById('regDob').value = user.dob || '';
+            document.getElementById('regReligion').value = user.religion || '';
+            document.getElementById('regTribe').value = user.tribe || '';
+            document.getElementById('regSection').value = user.section || '';
+            document.getElementById('regJobTitle').value = user.jobTitle || '';
+            document.getElementById('regEmail').value = user.email;
+            document.getElementById('regPhone').value = user.phone || '';
+            document.getElementById('regNotes').value = user.notes || '';
+
+            showTab('registration');
+        }
+
+        function toggleUserVerification(index) {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can verify users.'); return; }
+
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const user = users[index];
+            const currentUser = checkDashboardAuth();
+
+            if (user.verified) {
+                if (confirm(`Are you sure you want to UNVERIFY ${user.fullname}? They will not be able to log in.`)) {
+                    user.verified = false;
+                    user.verifiedBy = null;
+                    user.verifiedAt = null;
+                    localStorage.setItem('sedaUsers', JSON.stringify(users));
+                    displayUsers();
+                    alert('User has been unverified.');
+                }
+            } else {
+                if (confirm(`Are you want to VERIFY ${user.fullname}? They will be able to log in.`)) {
+                    user.verified = true;
+                    user.verifiedBy = currentUser.fullname || currentUser.email;
+                    user.verifiedAt = new Date().toISOString();
+                    localStorage.setItem('sedaUsers', JSON.stringify(users));
+                    displayUsers();
+                    alert('User has been verified successfully!');
+                }
+            }
+        }
+
+        // ==================== ADD USER MODAL ====================
+        function openAddUserModal() {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can add new users.'); return; }
+            document.getElementById('addUserModal').classList.add('active');
+            generateAddUserId();
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('active');
+            document.getElementById('addUserForm').reset();
+        }
+
+        function generateAddUserId() {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const nextId = users.length + 1;
+            const idNo = `SEDA2026${nextId.toString().padStart(2, '0')}`;
+            document.getElementById('addIdNo').value = idNo;
+        }
+
+        // ==================== ADMIN SETTINGS ====================
+        function loadAdminInfo() {
+            const admin = JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY));
+            if (admin) {
+                document.getElementById('adminRole').textContent = admin.isOwner ? 'System Owner' : 'Administrator';
+                document.getElementById('adminEmail').textContent = admin.email || 'N/A';
+                document.getElementById('adminCreated').textContent = admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A';
+            }
+        }
+
+        function changeAdminPassword(currentPassword, newPassword) {
+            const admin = getAdminData();
+            if (!admin) return { success: false, message: 'Admin not found' };
+            
+            const hashedCurrentPassword = enhancedHash(currentPassword);
+            if (admin.password !== hashedCurrentPassword) {
+                return { success: false, message: 'Current password is incorrect' };
+            }
+            
+            admin.password = enhancedHash(newPassword);
+            admin.passwordChangedAt = new Date().toISOString();
+            localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+
+            return { success: true, message: 'Password changed successfully' };
+        }
+
+        function changeAdminUsername(currentPassword, newUsername) {
+            const admin = getAdminData();
+            if (!admin) return { success: false, message: 'Admin not found' };
+            
+            const hashedCurrentPassword = enhancedHash(currentPassword);
+            if (admin.password !== hashedCurrentPassword) {
+                return { success: false, message: 'Current password is incorrect' };
+            }
+            
+            admin.username = newUsername;
+            admin.usernameChangedAt = new Date().toISOString();
+            localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+
+            return { success: true, message: 'Username changed successfully' };
+        }
+
+        function resetAdminPassword() {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can reset the password.'); return; }
+            
+            if (confirm('Are you sure you want to reset the admin password to default?\n\nDefault password: SEDAadmin2026')) {
+                const admin = JSON.parse(localStorage.getItem(ADMIN_STORAGE_KEY));
+                if (admin) {
+                    admin.password = enhancedHash('SEDAadmin2026');
+                    admin.passwordChangedAt = new Date().toISOString();
+                    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(admin));
+                    alert('Admin password has been reset to default: SEDAadmin2026\n\nPlease logout and login again to use the new password.');
+                }
+            }
+        }
+
+        function clearAllUsers() {
+            if (!isCurrentUserAdmin()) { alert('Only administrators can clear all users.'); return; }
+            
+            if (confirm('WARNING: This will delete ALL registered users! This action cannot be undone.\n\nAre you sure you want to continue?')) {
+                if (confirm('Are you REALLY sure? All user data will be permanently deleted!')) {
+                    localStorage.removeItem('sedaUsers');
+                    displayUsers();
+                    updateStats();
+                    alert('All users have been cleared successfully!');
+                }
+            }
+        }
+
+        // ==================== PARTICLES ====================
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (particlesContainer) {
+                particlesContainer.innerHTML = '';
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.width = Math.random() * 5 + 2 + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        // Login form
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const adminKey = document.getElementById('adminKey').value;
+
+            console.log('[LOGIN] Attempting admin login...');
+            const adminUser = verifyAdminCredentials(email, password, adminKey);
+            
+            if (adminUser) {
+                console.log('[LOGIN] Admin login successful!');
+                setCurrentUser(adminUser);
+                
+                const btn = document.getElementById('submitBtn');
+                btn.textContent = 'Verifying admin credentials...';
+                btn.disabled = true;
+
+                setTimeout(() => {
+                    alert('Admin login successful! Redirecting to dashboard...');
+                    showDashboardPage();
+                    updateUIBasedOnRole();
+                }, 1000);
+            } else {
+                console.log('[LOGIN] Admin login FAILED - invalid credentials');
+                alert('Invalid admin credentials or admin key');
+            }
+        });
+
+        // Dashboard registration form
+        document.getElementById('dashboardRegForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userData = {
+                idNo: document.getElementById('regIdNo').value,
+                fullname: document.getElementById('regFullname').value,
+                gender: document.getElementById('regGender').value,
+                dob: document.getElementById('regDob').value,
+                religion: document.getElementById('regReligion').value,
+                tribe: document.getElementById('regTribe').value,
+                section: document.getElementById('regSection').value,
+                jobTitle: document.getElementById('regJobTitle').value,
+                email: document.getElementById('regEmail').value,
+                phone: document.getElementById('regPhone').value,
+                passport: document.getElementById('regPassport').files[0] ? document.getElementById('regPassport').files[0].name : '',
+                notes: document.getElementById('regNotes').value,
+                role: 'user',
+                verified: false,
+                verifiedBy: null,
+                verifiedAt: null,
+                createdByAdmin: false,
+                registrationDate: new Date().toISOString()
+            };
+
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const existingUser = users.find(u => u.email === userData.email);
+            if (existingUser) {
+                alert('A user with this email already exists!');
+                return;
+            }
+
+            users.push(userData);
+            localStorage.setItem('sedaUsers', JSON.stringify(users));
+
+            this.reset();
+            generateIdNo();
+
+            alert('Registration submitted successfully! Your account will be verified by an administrator.');
+            showTab('users');
+        });
+
+        // Add user form
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!isCurrentUserAdmin()) { alert('Only administrators can add new users.'); return; }
+
+            const email = document.getElementById('addEmail').value;
+            const password = document.getElementById('addPassword').value;
+
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser) {
+                alert('A user with this email already exists!');
+                return;
+            }
+
+            const userData = {
+                idNo: document.getElementById('addIdNo').value,
+                fullname: document.getElementById('addFullname').value,
+                gender: document.getElementById('addGender').value,
+                dob: document.getElementById('addDob').value,
+                religion: document.getElementById('addReligion').value,
+                tribe: document.getElementById('addTribe').value,
+                section: document.getElementById('addSection').value,
+                jobTitle: document.getElementById('addJobTitle').value,
+                role: document.getElementById('addRole').value,
+                email: email,
+                phone: document.getElementById('addPhone').value,
+                password: enhancedHash(password),
+                verified: false,
+                verifiedBy: null,
+                verifiedAt: null,
+                createdByAdmin: true,
+                registrationDate: new Date().toISOString()
+            };
+
+            users.push(userData);
+            localStorage.setItem('sedaUsers', JSON.stringify(users));
+
+            closeAddUserModal();
+            displayUsers();
+            updateStats();
+
+            alert('User account created successfully! The user needs to be verified before they can log in.');
+        });
+
+        // Change password form
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (newPassword !== confirmNewPassword) { alert('New passwords do not match!'); return; }
+            if (newPassword.length < 6) { alert('New password must be at least 6 characters!'); return; }
+            
+            const result = changeAdminPassword(currentPassword, newPassword);
+            
+            if (result.success) {
+                alert(result.message);
+                document.getElementById('changePasswordForm').reset();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        });
+
+        // Change username form
+        document.getElementById('changeUsernameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('usernameCurrentPassword').value;
+            const newUsername = document.getElementById('newUsername').value;
+            
+            if (newUsername.length < 3) { alert('Username must be at least 3 characters!'); return; }
+            
+            const result = changeAdminUsername(currentPassword, newUsername);
+            
+            if (result.success) {
+                alert(result.message);
+                document.getElementById('changeUsernameForm').reset();
+                loadAdminInfo();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+                if (e.target.form) {
+                    e.preventDefault();
+                    e.target.form.dispatchEvent(new Event('submit'));
+                }
+            }
+            
+            const tabKeys = { '1': 'overview', '2': 'registration', '3': 'users', '4': 'analytics', '5': 'settings' };
+            if (tabKeys[e.key] && !document.getElementById('loginPage').classList.contains('hidden')) {
+                e.preventDefault();
+                showTab(tabKeys[e.key]);
+            }
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            initializeAdmin();
+            checkPage();
+            generateIdNo();
+            initParticles();
+            
+            // Update user info if logged in
+            const currentUser = checkDashboardAuth();
+            if (currentUser) {
+                const userNameEl = document.getElementById('currentUserName');
+                const userRoleEl = document.getElementById('currentUserRole');
+                if (userNameEl) userNameEl.textContent = currentUser.fullname || currentUser.email;
+                if (userRoleEl) userRoleEl.textContent = currentUser.role === 'owner' ? 'System Owner' : (currentUser.role === 'admin' ? 'Administrator' : 'User');
+                updateUIBasedOnRole();
+            }
+        });
+    </script>
+</body>
+</html>

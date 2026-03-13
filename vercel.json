@@ -2,66 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "dashboard.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/style.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/script.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/dashboard.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/particles.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
+      "src": "seda.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/index.html",
-      "dest": "/index.html"
+      "src": "/seda.html",
+      "dest": "/seda.html"
     },
     {
-      "src": "/dashboard.html",
-      "dest": "/dashboard.html"
-    },
-    {
-      "src": "/css/style.css",
-      "dest": "/css/style.css"
-    },
-    {
-      "src": "/js/script.js",
-      "dest": "/js/script.js"
-    },
-    {
-      "src": "/js/dashboard.js",
-      "dest": "/js/dashboard.js"
-    },
-    {
-      "src": "/js/particles.js",
-      "dest": "/js/particles.js"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "src": "/",
+      "dest": "/seda.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/seda.html"
     }
   ]
 }
