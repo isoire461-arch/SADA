@@ -1,0 +1,412 @@
+/* ==========================================================================
+   S.E.D.A Organization - Main Stylesheet
+   ==========================================================================
+   This file contains all the styling for the S.E.D.A authentication system
+   and user management dashboard. It uses a modern glassmorphism design.
+   
+   TABLE OF CONTENTS:
+   1. Global Reset & Base Styles
+   2. Body & Background
+   3. Container Styles
+   4. Header & Typography
+   5. Form Elements
+   6. Buttons
+   7. Links & Interactive Elements
+   8. Particles Animation
+   9. Media Queries (Responsive)
+   
+   HOW TO USE BACKGROUND IMAGE:
+   -------------------------------------------------------------------------
+   To use a picture as background instead of gradient:
+   
+   Option 1: Using a local image file
+   ------------------------------------
+   1. Place your image in the 'assets' folder (e.g., assets/background.jpg)
+   2. Uncomment/comment the background property below in body {}
+   3. Use: background: url('../assets/your-image.jpg') no-repeat center center fixed;
+   
+   Option 2: Using an online/image URL
+   ------------------------------------
+   1. Use any image URL (from unsplash, pexels, etc.)
+   2. Example: background: url('https://images.unsplash.com/photo-xxx') no-repeat center center fixed;
+   
+   Option 3: Using background image with overlay (recommended)
+   -----------------------------------------------------------
+   Use this to make text more readable:
+   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+               url('../assets/your-image.jpg') no-repeat center center fixed;
+   
+   IMPORTANT: Also set background-size: cover; to fill the screen
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   1. GLOBAL RESET & BASE STYLES
+   The asterisk (*) selector targets ALL elements to reset default browser
+   spacing and apply consistent box-sizing.
+   -------------------------------------------------------------------------- */
+
+/* * { } - Universal selector that targets every HTML element */
+* {
+    margin: 0;              /* Remove default outer margin from all elements */
+    padding: 0;             /* Remove default inner padding from all elements */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+}
+
+/* -------------------------------------------------------------------------
+   2. BODY & BACKGROUND STYLES
+   Sets up the main page container with gradient or image background
+   -------------------------------------------------------------------------- */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font stack - uses Segoe UI if available, falls back to system fonts */
+    
+    /* BACKGROUND IMAGE: Using assets/image 1.png with overlay for better readability */
+    background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.75)), 
+                url('../assets/image 1.png') no-repeat center center fixed;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    
+    min-height: 100vh;      /* Minimum height = 100% of viewport height - ensures full screen */
+    display: flex;          /* Enable flexbox layout for child elements */
+    justify-content: center; /* Horizontally center the flex children */
+    align-items: center;   /* Vertically center the flex children */
+    overflow: hidden;      /* Hide scrollbars - prevents scrolling on login page */
+}
+
+/* -------------------------------------------------------------------------
+   3. CONTAINER STYLES
+   The main card/window that holds the login/signup forms
+   -------------------------------------------------------------------------- */
+
+.container {
+    background: rgba(255, 255, 255, 0.88); /* White with 88% opacity - glass effect */
+    border-radius: 20px;    /* Round corners - 20px radius */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); /* Enhanced drop shadow for depth */
+    padding: 40px;          /* Internal spacing around content */
+    width: 100%;           /* Full width of parent */
+    max-width: 420px;       /* Maximum width constraint for better proportions */
+    backdrop-filter: blur(10px); /* Blur effect behind container (glassmorphism) */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    animation: fadeIn 1s ease-in-out; /* Fade in animation on page load */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border for definition */
+}
+
+/* -------------------------------------------------------------------------
+   KEYFRAME ANIMATIONS
+   Defines the fadeIn animation used above
+   -------------------------------------------------------------------------- */
+
+@keyframes fadeIn {
+    /* Start state: invisible and slightly up */
+    from { 
+        opacity: 0;            /* Fully transparent at start */
+        transform: translateY(-20px); /* Moves element 20px upward */
+    }
+    /* End state: fully visible and in normal position */
+    to { 
+        opacity: 1;            /* Fully opaque at end */
+        transform: translateY(0); /* Returns to normal position */
+    }
+}
+
+/* -------------------------------------------------------------------------
+   4. HEADER & TYPOGRAPHY STYLES
+   Page titles and descriptions
+   -------------------------------------------------------------------------- */
+
+.header {
+    text-align: center;      /* Center-align all text in header */
+    margin-bottom: 30px;      /* Space below header */
+}
+
+.header h1 {
+    font-size: 2.2rem;       /* Heading font size: 2.2x base size */
+    color: #1e293b;             /* Dark slate text color */
+    margin-bottom: 10px;     /* Space below heading */
+    font-weight: 700;        /* Bold heading */
+    letter-spacing: -0.5px;  /* Slight letter spacing adjustment */
+}
+
+.header p {
+    color: #475569;             /* Slate gray text color */
+    font-size: 1rem;        /* Base font size */
+    font-weight: 500;        /* Medium weight */
+}
+
+/* -------------------------------------------------------------------------
+   5. FORM TOGGLE STYLES
+   Switch between Login/Signup forms
+   -------------------------------------------------------------------------- */
+
+.toggle-form {
+    margin-top: 15px;        /* Space above toggle */
+    text-align: center;     /* Center the toggle buttons */
+}
+
+.toggle-form span {
+    color: #999;            /* Light gray for inactive state */
+    cursor: pointer;        /* Show pointer cursor on hover */
+    font-size: 0.9rem;      /* Slightly smaller than base */
+    transition: color 0.3s ease; /* Smooth color transition */
+    padding: 5px 10px;      /* Internal spacing */
+    border-radius: 5px;     /* Slight rounded corners */
+}
+
+/* Active state for toggle button */
+.toggle-form span.active {
+    color: #667eea;         /* Purple-blue for active state */
+    font-weight: bold;      /* Bold text */
+    background: rgba(102, 126, 234, 0.1); /* Light purple background */
+}
+
+/* Hover state for toggle */
+.toggle-form span:hover {
+    color: #667eea;         /* Same purple-blue on hover */
+}
+
+/* -------------------------------------------------------------------------
+   6. FORM GROUP STYLES
+   Input field containers with floating labels
+   -------------------------------------------------------------------------- */
+
+.form-group {
+    margin-bottom: 20px;    /* Space below each form field */
+    position: relative;     /* Parent for absolute positioned label */
+}
+
+.form-group input {
+    width: 100%;            /* Full width of container */
+    padding: 15px 20px;     /* Internal spacing: top/bottom 15px, left/right 20px */
+    border: 2px solid #e1e5e9; /* Light gray border */
+    border-radius: 10px;    /* Rounded corners */
+    font-size: 1rem;       /* Base font size */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+    background: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
+}
+
+/* File input specific styling */
+.form-group input[type="file"] {
+    padding: 10px;          /* Less padding for file inputs */
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    cursor: pointer;       /* Show file cursor */
+}
+
+/* Focus state for file input */
+.form-group input[type="file"]:focus {
+    outline: none;          /* Remove default browser outline */
+    border-color: #667eea; /* Purple-blue border on focus */
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Blue glow effect */
+    background: rgba(255, 255, 255, 1); /* Full opacity on focus */
+}
+
+/* Floating label styling */
+.form-group label {
+    position: absolute;     /* Position relative to form-group */
+    top: 15px;              /* 15px from top of input */
+    left: 20px;             /* 20px from left of input */
+    color: #999;            /* Gray placeholder color */
+    transition: all 0.3s ease; /* Smooth animation */
+    pointer-events: none;   /* Click-through - lets input receive clicks */
+}
+
+/* Label animation when input is focused OR has content */
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    top: -10px;             /* Move label above input */
+    left: 15px;             /* Slight left adjustment */
+    font-size: 0.8rem;     /* Smaller font size */
+    color: #667eea;         /* Purple-blue color */
+    background: white;      /* White background to cover border */
+    padding: 0 5px;         /* Small horizontal padding */
+}
+
+/* -------------------------------------------------------------------------
+   7. BUTTON STYLES
+   Submit buttons with gradient and hover effects
+   -------------------------------------------------------------------------- */
+
+.btn {
+    width: 100%;            /* Full width button */
+    padding: 15px;         /* Internal spacing */
+    background: linear-gradient(45deg, #667eea, #764ba2); /* Purple gradient */
+    color: white;          /* White text */
+    border: none;          /* No border */
+    border-radius: 10px;   /* Rounded corners */
+    font-size: 1.1rem;     /* Slightly larger text */
+    cursor: pointer;       /* Pointer cursor */
+    transition: all 0.3s ease; /* Smooth transitions */
+    margin-top: 10px;      /* Space above button */
+}
+
+/* Hover state - lifts button up */
+.btn:hover {
+    transform: translateY(-2px); /* Move up 2px */
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); /* Larger shadow */
+}
+
+/* Active/click state */
+.btn:active {
+    transform: translateY(0); /* Return to normal position */
+}
+
+/* -------------------------------------------------------------------------
+   8. LINK STYLES
+   Hyperlinks and interactive text
+   -------------------------------------------------------------------------- */
+
+.forgot-password {
+    text-align: center;     /* Center the link */
+    margin-top: 20px;       /* Space above */
+}
+
+.forgot-password a {
+    color: #667eea;         /* Purple-blue link color */
+    text-decoration: none; /* Remove underline */
+    font-size: 0.9rem;      /* Smaller text */
+    transition: color 0.3s ease; /* Smooth color change */
+}
+
+/* Link hover */
+.forgot-password a:hover {
+    color: #764ba2;         /* Darker purple on hover */
+    text-decoration: underline; /* Show underline */
+}
+
+/* Admin link specific styling */
+.admin-link {
+    margin-left: 10px;       /* Space to the left */
+}
+
+.admin-link a {
+    color: #764ba2;         /* Purple color */
+    text-decoration: none;
+    font-size: 0.85rem;     /* Smaller font */
+    font-weight: 600;       /* Semi-bold */
+    transition: color 0.3s ease;
+}
+
+.admin-link a:hover {
+    color: #667eea;         /* Blue on hover */
+    text-decoration: underline;
+}
+
+/* Admin key field styling */
+#adminKeyGroup label {
+    color: #764ba2;         /* Purple label color */
+}
+
+/* -------------------------------------------------------------------------
+   9. PARTICLES ANIMATION STYLES
+   Floating background particles effect
+   -------------------------------------------------------------------------- */
+
+.particles {
+    position: fixed;     /* Fixed position relative to body */
+    top: 0;                 /* Start from top */
+    left: 0;                /* Start from left */
+    width: 100%;            /* Full width */
+    height: 100%;           /* Full height */
+    pointer-events: none;  /* Allow clicks to pass through */
+    z-index: 0;            /* Behind container but above background */
+    overflow: hidden;      /* Hide particles that move outside */
+}
+
+.particle {
+    position: absolute;     /* Individual particle positioning */
+    background: rgba(255, 255, 255, 0.15); /* White with 15% opacity - more visible */
+    border-radius: 50%;     /* Make it circular */
+    animation: float 6s ease-in-out infinite; /* Floating animation */
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.1); /* Subtle glow effect */
+}
+
+/* Particle floating keyframe */
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px); /* Start/end at original position */
+    }
+    50% { 
+        transform: translateY(-20px); /* Move up 20px at midpoint */
+    }
+}
+
+/* -------------------------------------------------------------------------
+   10. MEDIA QUERIES (RESPONSIVE DESIGN)
+   Adjust styles for smaller screens (mobile devices)
+   -------------------------------------------------------------------------- */
+
+/* Apply styles when screen width is 480px or less */
+@media (max-width: 480px) {
+    .container {
+        margin: 20px;              /* Add margin around container */
+        padding: 30px 20px;        /* Less padding on mobile */
+    }
+    .header h1 {
+        font-size: 2rem;           /* Smaller heading on mobile */
+    }
+}
+
+
+
+
+
+/* ==========================================================================
+   BACKGROUND IMAGE IMPLEMENTATION GUIDE
+   ==========================================================================
+   
+   HOW TO ADD A BACKGROUND IMAGE:
+   
+   1. Prepare your image:
+      - Use a high-quality image (recommended: 1920x1080 or larger)
+      - Supported formats: JPG, PNG, WebP
+      - Recommended: Use compressed images for faster loading
+   
+   2. Place the image:
+      - Create an 'assets' folder in the project root if not exists
+      - Copy your image to: assets/background.jpg
+   
+   3. Update the CSS:
+      - Replace the body background with one of these options:
+   
+   OPTION A: Simple background image
+   --------------------------------
+   body {
+       background: url('../assets/background.jpg') no-repeat center center fixed;
+       background-size: cover;  // Scales image to cover entire area
+   }
+   
+   OPTION B: Background image with dark overlay (recommended)
+   ---------------------------------------------------------
+   body {
+       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                   url('../assets/background.jpg') no-repeat center center fixed;
+       background-size: cover;
+   }
+   // The rgba(0,0,0,0.5) adds a 50% black overlay making text more readable
+   
+   OPTION C: Using an online image URL
+   -----------------------------------
+   body {
+       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                   url('https://images.unsplash.com/photo-xxx') no-repeat center center fixed;
+       background-size: cover;
+   }
+   
+   OPTION D: Background image for dashboard only
+   ---------------------------------------------
+   Add this to dashboard.html's <style> section for dashboard-specific background:
+   body {
+       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                   url('../assets/dashboard-bg.jpg') no-repeat center center fixed;
+       background-size: cover;
+   }
+   
+   4. Troubleshooting:
+      - If image doesn't show: Check the path is correct (../assets/ from css folder)
+      - If image is too light/dark: Adjust the rgba overlay values (0.3 = lighter, 0.7 = darker)
+      - If image repeats: Ensure 'no-repeat' is in the background property
+      - If image doesn't fill screen: Ensure 'background-size: cover' is added
+   
+   ========================================================================== */

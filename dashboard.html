@@ -1,4 +1,4 @@
-it be <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,6 +33,7 @@ it be <!DOCTYPE html>
             width: 280px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
             position: fixed;
             height: 100vh;
@@ -104,6 +105,7 @@ it be <!DOCTYPE html>
         .top-bar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 20px 30px;
             margin-bottom: 30px;
@@ -160,6 +162,7 @@ it be <!DOCTYPE html>
         .content-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -579,6 +582,22 @@ it be <!DOCTYPE html>
                     </div>
                 </div>
             </div>
+            
+            <!-- Google Drive Status Bar -->
+            <div id="googleConfigWarning" class="cloud-status-bar" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 20px; margin: 10px 20px; border-radius: 8px; display: none;">
+                <i class="fas fa-exclamation-triangle" style="color: #f59e0b; margin-right: 10px;"></i>
+                <span style="color: #92400e; font-size: 0.9rem;">
+                    <strong>Google Drive not configured.</strong> To enable cloud backup, please set up your Google Cloud credentials. 
+                    <a href="#" onclick="alert('Setup Instructions:\n1. Go to Google Cloud Console\n2. Create a project\n3. Enable Google Drive API\n4. Create OAuth 2.0 credentials\n5. Add your domain to authorized origins\n6. Copy Client ID and API Key to js/googledrive.js'); return false;" style="color: #667eea;">Learn more</a>
+                </span>
+            </div>
+            
+            <div class="cloud-status-bar" style="background: rgba(255,255,255,0.9); border: 1px solid #e5e7eb; padding: 10px 20px; margin: 10px 20px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <span id="driveStatus" style="color: #666; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-cloud-upload-alt"></i> Not connected
+                </span>
+                <span id="lastCloudSync" style="color: #999; font-size: 0.85rem; display: none;"></span>
+            </div>
 
             <!-- Overview Tab -->
             <div id="overview" class="tab-content active">
@@ -771,12 +790,25 @@ it be <!DOCTYPE html>
                     <div class="card-header">
                         <i class="fas fa-users"></i>
                         <h3>Registered Users</h3>
-                        <div class="export-buttons" style="margin-left: auto; display: flex; gap: 8px;">
-                            <button class="btn-small" onclick="exportToExcel()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
-                                <i class="fas fa-file-excel"></i> Export Excel
+                        <div class="export-buttons" style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn-small" onclick="exportToExcel()" style="background: #10b981; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-file-excel"></i> <span class="btn-text">Export Excel</span>
                             </button>
-                            <button class="btn-small" onclick="exportToPDF()" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
-                                <i class="fas fa-file-pdf"></i> Export PDF
+                            <button class="btn-small" onclick="exportToPDF()" style="background: #ef4444; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-file-pdf"></i> <span class="btn-text">Export PDF</span>
+                            </button>
+                            <!-- Google Drive Buttons -->
+                            <button id="googleSignInBtn" class="btn-small" onclick="signInGoogle()" style="background: #4285f4; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: none; align-items: center; gap: 6px;">
+                                <i class="fab fa-google-drive"></i> <span class="btn-text">Connect Drive</span>
+                            </button>
+                            <button id="googleSignOutBtn" class="btn-small" onclick="signOutGoogle()" style="background: #666; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: none; align-items: center; gap: 6px;">
+                                <i class="fas fa-sign-out-alt"></i> <span class="btn-text">Disconnect</span>
+                            </button>
+                            <button id="saveToDriveBtn" class="btn-small" onclick="saveToGoogleDrive()" style="background: #0d9488; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: none; align-items: center; gap: 6px;">
+                                <i class="fas fa-cloud-upload-alt"></i> <span class="btn-text">Save to Drive</span>
+                            </button>
+                            <button id="saveJSONToDriveBtn" class="btn-small" onclick="saveJSONToGoogleDrive()" style="background: #7c3aed; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: none; align-items: center; gap: 6px;">
+                                <i class="fas fa-file-code"></i> <span class="btn-text">Save JSON</span>
                             </button>
                         </div>
                     </div>
@@ -813,5 +845,6 @@ it be <!DOCTYPE html>
 
     <script src="js/dashboard.js"></script>
     <script src="js/particles.js"></script>
+    <script src="js/googledrive.js"></script>
 </body>
 </html>
