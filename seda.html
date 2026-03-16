@@ -372,7 +372,26 @@
                                 <label for="regReligion">Religion</label>
                             </div>
                             <div class="form-group">
-                                <input type="text" id="regTribe" placeholder=" ">
+                                <select id="regTribe" required>
+                                    <option value="">Select Tribe/Language</option>
+                                    <option value="Temne">Temne</option>
+                                    <option value="Mende">Mende</option>
+                                    <option value="Limba">Limba</option>
+                                    <option value="Kono">Kono</option>
+                                    <option value="Fullah">Fullah</option>
+                                    <option value="Mandingo">Mandingo</option>
+                                    <option value="Loko">Loko</option>
+                                    <option value="Sherbro">Sherbro</option>
+                                    <option value="Krio">Krio</option>
+                                    <option value="Kuranko">Kuranko</option>
+                                    <option value="Susu">Susu</option>
+                                    <option value="Kissi">Kissi</option>
+                                    <option value="Yalunka">Yalunka</option>
+                                    <option value="Vai">Vai</option>
+                                    <option value="Kroo">Kroo</option>
+                                    <option value="Krim">Krim</option>
+                                    <option value="Other">Other</option>
+                                </select>
                                 <label for="regTribe">Tribe/Language</label>
                             </div>
                             <div class="form-group">
@@ -872,12 +891,14 @@
                     <td>${verifiedBadge}</td>
                     <td>${regDate}</td>
                     <td class="user-actions">
+                        ${user.passport ? `<button class="btn-small" onclick="viewPassport(${index})" style="background: #3b82f6; color: white;">View Photo</button>` : ''}
                         <button class="btn-small btn-edit" onclick="editUser(${index})">Edit</button>
                         ${isAdmin ? `
                             <button class="btn-small ${isVerified ? 'btn-demote' : 'btn-promote'}" onclick="toggleUserVerification(${index})">
                                 ${isVerified ? 'Unverify' : 'Verify'}
                             </button>
                             ${!isUserAdmin ? `<button class="btn-small btn-promote" onclick="promoteToAdmin(${index})">Promote</button>` : `<button class="btn-small btn-demote" onclick="demoteToUser(${index})">Demote</button>`}
+                            <button class="btn-small" onclick="downloadRegistrationForm(${index})" style="background: #8b5cf6; color: white;">Download Form</button>
                             <button class="btn-small btn-delete" onclick="deleteUser(${index})">Delete</button>
                         ` : ''}
                     </td>
@@ -949,6 +970,138 @@
                 displayUsers();
                 alert('Admin demoted to user successfully!');
             }
+        }
+
+        // View passport picture
+        function viewPassport(index) {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const user = users[index];
+            
+            if (!user || !user.passport) {
+                alert('No passport photo available for this user.');
+                return;
+            }
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'passportModal';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; justify-content: center; align-items: center;';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: white; padding: 20px; border-radius: 10px; max-width: 500px; max-height: 80vh; overflow: auto; text-align: center;';
+            
+            const img = document.createElement('img');
+            img.src = user.passport;
+            img.style.cssText = 'max-width: 100%; max-height: 60vh; border-radius: 5px;';
+            
+            const name = document.createElement('h3');
+            name.textContent = user.fullname || 'User Passport';
+            name.style.cssText = 'margin: 15px 0 5px; color: #333;';
+            
+            const idNo = document.createElement('p');
+            idNo.textContent = 'ID: ' + (user.idNo || 'N/A');
+            idNo.style.cssText = 'color: #666; margin: 0;';
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = 'margin-top: 15px; padding: 10px 30px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer;';
+            closeBtn.onclick = () => modal.remove();
+            
+            modalContent.appendChild(name);
+            modalContent.appendChild(idNo);
+            modalContent.appendChild(img);
+            modalContent.appendChild(closeBtn);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Close on background click
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        // Download individual registration form as PDF
+        function downloadRegistrationForm(index) {
+            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+            const user = users[index];
+            
+            if (!user) {
+                alert('User not found.');
+                return;
+            }
+            
+            const regDate = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString() : 'N/A';
+            const dob = user.dob ? new Date(user.dob).toLocaleDateString() : 'N/A';
+            const verifiedText = user.verified === true ? 'Verified' : 'Pending';
+            
+            let formContent = `
+                <html>
+                <head>
+                    <title>Registration Form - ${user.fullname}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; }
+                        h1 { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h2 { color: #333; margin: 0; }
+                        .header p { color: #666; margin: 5px 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                        th { background-color: #f5f5f5; width: 30%; color: #333; }
+                        .passport-section { text-align: center; margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+                        .passport-section img { max-width: 200px; max-height: 250px; border-radius: 5px; }
+                        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+                        .status { padding: 5px 10px; border-radius: 3px; }
+                        .verified { background: #d4edda; color: #155724; }
+                        .pending { background: #fff3cd; color: #856404; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>S.E.D.A Registration Form</h1>
+                    <div class="header">
+                        <h2>${user.fullname || 'N/A'}</h2>
+                        <p>ID No: ${user.idNo || 'N/A'}</p>
+                        <p>Registration Date: ${regDate}</p>
+                        <p><span class="status ${user.verified === true ? 'verified' : 'pending'}">${verifiedText}</span></p>
+                    </div>
+                    
+                    <table>
+                        <tr><th>Gender</th><td>${user.gender || 'N/A'}</td></tr>
+                        <tr><th>Date of Birth</th><td>${dob}</td></tr>
+                        <tr><th>Religion</th><td>${user.religion || 'N/A'}</td></tr>
+                        <tr><th>Tribe/Language</th><td>${user.tribe || 'N/A'}</td></tr>
+                        <tr><th>Section</th><td>${user.section || 'N/A'}</td></tr>
+                        <tr><th>Job Title</th><td>${user.jobTitle || 'N/A'}</td></tr>
+                        <tr><th>Email</th><td>${user.email || 'N/A'}</td></tr>
+                        <tr><th>Phone</th><td>${user.phone || 'N/A'}</td></tr>
+                        <tr><th>Role</th><td>${user.role || 'user'}</td></tr>
+                    </table>
+                    
+                    ${user.passport ? `
+                    <div class="passport-section">
+                        <h3>Passport Photo</h3>
+                        <img src="${user.passport}" alt="Passport Photo">
+                    </div>
+                    ` : ''}
+                    
+                    ${user.notes ? `
+                    <table>
+                        <tr><th>Additional Notes</th><td>${user.notes}</td></tr>
+                    </table>
+                    ` : ''}
+                    
+                    <div class="footer">
+                        <p>Generated by S.E.D.A System on ${new Date().toLocaleString()}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Open print dialog
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(formContent);
+            printWindow.document.close();
+            printWindow.print();
         }
 
         function editUser(index) {
@@ -1139,42 +1292,68 @@
         document.getElementById('dashboardRegForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const userData = {
-                idNo: document.getElementById('regIdNo').value,
-                fullname: document.getElementById('regFullname').value,
-                gender: document.getElementById('regGender').value,
-                dob: document.getElementById('regDob').value,
-                religion: document.getElementById('regReligion').value,
-                tribe: document.getElementById('regTribe').value,
-                section: document.getElementById('regSection').value,
-                jobTitle: document.getElementById('regJobTitle').value,
-                email: document.getElementById('regEmail').value,
-                phone: document.getElementById('regPhone').value,
-                passport: document.getElementById('regPassport').files[0] ? document.getElementById('regPassport').files[0].name : '',
-                notes: document.getElementById('regNotes').value,
-                role: 'user',
-                verified: false,
-                verifiedBy: null,
-                verifiedAt: null,
-                createdByAdmin: false,
-                registrationDate: new Date().toISOString()
+            // Function to convert file to base64
+            const fileToBase64 = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
             };
 
-            const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
-            const existingUser = users.find(u => u.email === userData.email);
-            if (existingUser) {
-                alert('A user with this email already exists!');
-                return;
-            }
+            const passportFile = document.getElementById('regPassport').files[0];
+            
+            const saveUser = async () => {
+                let passportData = '';
+                if (passportFile) {
+                    try {
+                        passportData = await fileToBase64(passportFile);
+                    } catch (err) {
+                        console.error('Error reading passport file:', err);
+                    }
+                }
 
-            users.push(userData);
-            localStorage.setItem('sedaUsers', JSON.stringify(users));
+                const userData = {
+                    idNo: document.getElementById('regIdNo').value,
+                    fullname: document.getElementById('regFullname').value,
+                    gender: document.getElementById('regGender').value,
+                    dob: document.getElementById('regDob').value,
+                    religion: document.getElementById('regReligion').value,
+                    tribe: document.getElementById('regTribe').value,
+                    section: document.getElementById('regSection').value,
+                    jobTitle: document.getElementById('regJobTitle').value,
+                    email: document.getElementById('regEmail').value,
+                    phone: document.getElementById('regPhone').value,
+                    passport: passportData,
+                    passportName: passportFile ? passportFile.name : '',
+                    notes: document.getElementById('regNotes').value,
+                    role: 'user',
+                    verified: false,
+                    verifiedBy: null,
+                    verifiedAt: null,
+                    createdByAdmin: false,
+                    registrationDate: new Date().toISOString()
+                };
 
-            this.reset();
-            generateIdNo();
+                const users = JSON.parse(localStorage.getItem('sedaUsers')) || [];
+                const existingUser = users.find(u => u.email === userData.email);
+                if (existingUser) {
+                    alert('A user with this email already exists!');
+                    return;
+                }
 
-            alert('Registration submitted successfully! Your account will be verified by an administrator.');
-            showTab('users');
+                users.push(userData);
+                localStorage.setItem('sedaUsers', JSON.stringify(users));
+
+                this.reset();
+                generateIdNo();
+
+                alert('Registration submitted successfully! Your account will be verified by an administrator.');
+                showTab('users');
+            };
+
+            saveUser();
         });
 
         // Add user form

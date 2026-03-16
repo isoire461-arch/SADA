@@ -771,6 +771,14 @@ it be <!DOCTYPE html>
                     <div class="card-header">
                         <i class="fas fa-users"></i>
                         <h3>Registered Users</h3>
+                        <div class="export-buttons" style="margin-left: auto; display: flex; gap: 8px;">
+                            <button class="btn-small" onclick="exportToExcel()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </button>
+                            <button class="btn-small" onclick="exportToPDF()" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </button>
+                        </div>
                     </div>
                     <div class="card-content">
                         <div id="usersList">
